@@ -1,0 +1,8 @@
+---
+- version: v1alpha1
+  group: operator.focus.io
+  kind: Focus
+  role: argocd
+  role: prometheus
+  role: grafana
+# +kubebuilder:scaffold:watch

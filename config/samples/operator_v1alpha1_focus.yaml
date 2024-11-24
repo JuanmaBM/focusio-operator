@@ -1,0 +1,9 @@
+apiVersion: operator.focus.io/v1alpha1
+kind: Focus
+metadata:
+  labels:
+    app.kubernetes.io/name: focusio-operator
+    app.kubernetes.io/managed-by: kustomize
+  name: focus-sample
+spec:
+  # TODO(user): Add fields here

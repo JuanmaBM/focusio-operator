@@ -1,0 +1,24 @@
+---
+- name: "Create Grafana Namespace"
+  kubernetes.core.k8s:
+    api_version: v1
+    kind: Namespace
+    name: "{{ install_namespace | default('monitoring') }}"
+
+- name: "Install Grafana"
+  kubernetes.core.k8s:
+    state: present
+    definition: "{{ lookup('file', 'https://raw.githubusercontent.com/grafana/helm-charts/main/charts/grafana/values.yaml') }}"
+
+- name: "Wait for Grafana to be Ready"
+  kubernetes.core.k8s_info:
+    api_version: v1
+    kind: Pod
+    namespace: "{{ grafana_namespace | default('monitoring') }}"
+    label_selectors:
+      - app.kubernetes.io/name=grafana
+  until: item.status.phase == "Running"
+  retries: 10
+  delay: 30
+  loop: "{{ resources.resources }}"
+  when: resources.resources is defined

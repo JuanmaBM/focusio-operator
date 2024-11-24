@@ -1,0 +1,9 @@
+apiVersion: operator.focus.io/v1alpha1
+kind: Focus
+metadata:
+  name: focus-sample
+spec:
+  installNamespace: monitoring
+  argocdVersion: stable
+  installPrometheus: true
+  installGrafana: true

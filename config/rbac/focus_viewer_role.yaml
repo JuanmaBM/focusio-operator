@@ -1,0 +1,23 @@
+# permissions for end users to view foci.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/name: focusio-operator
+    app.kubernetes.io/managed-by: kustomize
+  name: focus-viewer-role
+rules:
+- apiGroups:
+  - operator.focus.io
+  resources:
+  - foci
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - operator.focus.io
+  resources:
+  - foci/status
+  verbs:
+  - get
