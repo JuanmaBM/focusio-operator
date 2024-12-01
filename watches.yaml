@@ -1,6 +1,6 @@
 ---
 - version: v1alpha1
-  group: operator.focus.io
+  group: io.focus.core
   kind: Focus
   role: argocd
   role: prometheus

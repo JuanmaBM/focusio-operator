@@ -8,7 +8,7 @@ metadata:
   name: focus-editor-role
 rules:
 - apiGroups:
-  - operator.focus.io
+  - io.focus.core
   resources:
   - foci
   verbs:
@@ -20,7 +20,7 @@ rules:
   - update
   - watch
 - apiGroups:
-  - operator.focus.io
+  - io.focus.core
   resources:
   - foci/status
   verbs:

@@ -38,10 +38,10 @@ rules:
       - update
       - watch
   ##
-  ## Rules for operator.focus.io/v1alpha1, Kind: Focus
+  ## Rules for io.focus.core/v1alpha1, Kind: Focus
   ##
   - apiGroups:
-      - operator.focus.io
+      - io.focus.core
     resources:
       - foci
       - foci/status

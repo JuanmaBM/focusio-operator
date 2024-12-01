@@ -8,7 +8,7 @@ metadata:
   name: focus-viewer-role
 rules:
 - apiGroups:
-  - operator.focus.io
+  - io.focus.core
   resources:
   - foci
   verbs:
@@ -16,7 +16,7 @@ rules:
   - list
   - watch
 - apiGroups:
-  - operator.focus.io
+  - io.focus.core
   resources:
   - foci/status
   verbs:

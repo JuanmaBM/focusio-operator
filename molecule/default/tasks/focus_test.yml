@@ -1,5 +1,5 @@
 ---
-- name: Create the operator.focus.io/v1alpha1.Focus
+- name: Create the io.focus.core/v1alpha1.Focus
   k8s:
     state: present
     namespace: '{{ namespace }}'

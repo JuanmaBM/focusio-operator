@@ -1,4 +1,4 @@
-apiVersion: operator.focus.io/v1alpha1
+apiVersion: io.focus.core/v1alpha1
 kind: Focus
 metadata:
   name: focus-sample
