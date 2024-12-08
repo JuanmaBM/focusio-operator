@@ -6,6 +6,7 @@ metadata:
     app.kubernetes.io/managed-by: kustomize
   name: focus-sample
 spec:
-  argocdNamespace: argocd
+  argocdNamespace: gitops
   argocdVersion: stable
+  argocdAdminPassword: focus
   

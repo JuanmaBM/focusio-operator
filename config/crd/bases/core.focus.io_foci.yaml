@@ -26,5 +26,7 @@ spec:
                 type: string
               argocdVersion:
                 type: string
+              argocdAdminPassword:
+                type: string
     subresources:
       status: {}

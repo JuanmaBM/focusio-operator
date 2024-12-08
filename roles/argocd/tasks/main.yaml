@@ -3,13 +3,13 @@
   kubernetes.core.k8s:
     api_version: v1
     kind: Namespace
-    name: "{{ argocdNamespace | default('argocd') }}"
+    name: "{{ argocd_namespace | default('argocd') }}"
 
 - name: "Install ArgoCD"
   kubernetes.core.k8s:
     state: present
     definition: "{{ lookup('file', 'files/argocd.yaml') }}"
-    namespace: "{{ argocdNamespace | default('argocd') }}"
+    namespace: "{{ argocd_namespace | default('argocd') }}"
 
 - name: Expose ArgoCD Server via LoadBalancer
   kubernetes.core.k8s:
@@ -19,7 +19,7 @@
       kind: Service
       metadata:
         name: argocd-server
-        namespace: "{{ argocdNamespace | default('argocd') }}"
+        namespace: "{{ argocd_namespace | default('argocd') }}"
       spec:
         selector:
           app.kubernetes.io/name: argocd-server
@@ -33,15 +33,88 @@
             protocol: TCP
             name: https
         type: LoadBalancer
-  register: argocd_service
 
-- name: Wait for LoadBalancer IP
-  wait_for:
-    delay: 10
-    timeout: 300
-    state: started
-  until: argocd_service.status.loadBalancer.ingress[0].ip is defined
+- name: "Fetch existing ConfigMap 'argocd-rbac-cm'"
+  kubernetes.core.k8s_info:
+    api_version: v1
+    kind: ConfigMap
+    namespace: "{{ argocd_namespace | default('argocd') }}"
+    name: argocd-rbac-cm
+  register: argocd_rbac_cm
 
-- name: Print ArgoCD External IP
-  debug:
-    msg: "ArgoCD is now accessible at http://{{ argocd_service.status.loadBalancer.ingress[0].ip }}:80 or https://{{ argocd_service.status.loadBalancer.ingress[0].ip }}:443"
+- name: "Add focus admin user to ConfigMap 'argocd-rbac-cm'"
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: argocd-rbac-cm
+        namespace: "{{ argocd_namespace | default('argocd') }}"
+      data:
+        policy.csv: "{{ argocd_rbac_cm.resources[0].data['policy.csv'] | default('') }}\ng, focus-admin, role:admin"
+
+- name: "Patch admin password in Secret 'argocd-secret'"
+  kubernetes.core.k8s:
+    state: patched
+    api_version: v1
+    kind: Secret
+    name: argocd-secret
+    namespace: gitops
+    patch:
+      spec:
+        data:
+          admin.password: "{{ argocdAdminPassword | b64encode }}"
+
+
+# - name: "Fetch existing Secret 'argocd-secret'"
+#   kubernetes.core.k8s_info:
+#     api_version: v1
+#     kind: Secret
+#     namespace: "{{ argocd_namespace | default('argocd') }}"
+#     name: argocd-secret
+#   register: argocd_secret
+
+# - name: "Add or update password for admin user in Secret 'argocd-secret'"
+#   kubernetes.core.k8s:
+#     state: present
+#     definition:
+#       apiVersion: v1
+#       kind: Secret
+#       metadata:
+#         name: argocd-secret
+#         namespace: "{{ argocd_namespace | default('argocd') }}"
+#       stringData:
+#         admin.password: "{{ argocd_admin_password }}"
+#         admin.passwordMtime: "{{ lookup('pipe', 'date +%FT%T%Z') }}"
+#       data:
+#         "{{ item.key }}": "{{ item.value }}"
+#     with_items:
+#       - key: "admin.password"
+#         value: "{{ argocd_admin_password }}"
+#       - key: "admin.passwordMtime"
+#         value: "{{ lookup('pipe', 'date +%FT%T%Z') }}"
+#     when: argocd_secret is defined
+
+- name: "Restart ArgoCD API server to apply changes"
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: argocd-server
+        namespace: "{{ argocd_namespace | default('argocd') }}"
+      spec:
+        replicas: 1
+  register: argocd_server_restart
+
+- name: "Wait for ArgoCD server to be ready"
+  kubernetes.core.k8s_info:
+    api_version: apps/v1
+    kind: Deployment
+    name: argocd-server
+    namespace: "{{ argocd_namespace | default('argocd') }}"
+  until: argocd_server_restart.status.readyReplicas == 1
+  retries: 5
+  delay: 10

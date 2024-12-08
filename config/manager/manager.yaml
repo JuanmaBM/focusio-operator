@@ -62,7 +62,7 @@ spec:
           - --leader-elect
           - --leader-election-id=focusio-operator
           - --health-probe-bind-address=:6789
-        image: docker.io/juanmabm/controller:1.0.8
+        image: docker.io/juanmabm/controller:0.1.0.7
         name: manager
         env:
         - name: ANSIBLE_GATHERING
