@@ -1,8 +1,8 @@
 ---
+# Use the 'create api' subcommand to add watches to this file.
 - version: v1alpha1
-  group: io.focus.core
+  group: core.focus.io
   kind: Focus
+  role: focus
   role: argocd
-  role: prometheus
-  role: grafana
 # +kubebuilder:scaffold:watch

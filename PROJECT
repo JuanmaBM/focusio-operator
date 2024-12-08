@@ -14,7 +14,7 @@ resources:
     crdVersion: v1
     namespaced: true
   domain: focus.io
-  group: operator
+  group: core
   kind: Focus
   version: v1alpha1
 version: "3"

@@ -1,4 +1,4 @@
-apiVersion: io.focus.core/v1alpha1
+apiVersion: core.focus.io/v1alpha1
 kind: Focus
 metadata:
   labels:
@@ -6,4 +6,6 @@ metadata:
     app.kubernetes.io/managed-by: kustomize
   name: focus-sample
 spec:
-  # TODO(user): Add fields here
+  argocdNamespace: argocd
+  argocdVersion: stable
+  

@@ -3,9 +3,45 @@
   kubernetes.core.k8s:
     api_version: v1
     kind: Namespace
-    name: "{{ install_namespace | default('argocd') }}"
+    name: "{{ argocdNamespace | default('argocd') }}"
 
 - name: "Install ArgoCD"
   kubernetes.core.k8s:
     state: present
-    definition: "{{ lookup('file', 'https://raw.githubusercontent.com/argoproj/argo-cd/{{ argocd_version | default('stable') }}/manifests/install.yaml') }}"
+    definition: "{{ lookup('file', 'files/argocd.yaml') }}"
+    namespace: "{{ argocdNamespace | default('argocd') }}"
+
+- name: Expose ArgoCD Server via LoadBalancer
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: argocd-server
+        namespace: "{{ argocdNamespace | default('argocd') }}"
+      spec:
+        selector:
+          app.kubernetes.io/name: argocd-server
+        ports:
+          - port: 80
+            targetPort: 8080
+            protocol: TCP
+            name: http
+          - port: 443
+            targetPort: 8080
+            protocol: TCP
+            name: https
+        type: LoadBalancer
+  register: argocd_service
+
+- name: Wait for LoadBalancer IP
+  wait_for:
+    delay: 10
+    timeout: 300
+    state: started
+  until: argocd_service.status.loadBalancer.ingress[0].ip is defined
+
+- name: Print ArgoCD External IP
+  debug:
+    msg: "ArgoCD is now accessible at http://{{ argocd_service.status.loadBalancer.ingress[0].ip }}:80 or https://{{ argocd_service.status.loadBalancer.ingress[0].ip }}:443"

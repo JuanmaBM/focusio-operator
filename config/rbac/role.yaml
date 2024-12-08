@@ -7,41 +7,18 @@ rules:
   ##
   ## Base operator rules
   ##
+  # FIXME: Try to use lower privileges to install additional resources (argocd, prometheus, grafana)
   - apiGroups:
-      - ""
+      - "*"
     resources:
-      - secrets
-      - pods
-      - pods/exec
-      - pods/log
+      - "*"
     verbs:
-      - create
-      - delete
-      - get
-      - list
-      - patch
-      - update
-      - watch
-  - apiGroups:
-      - apps
-    resources:
-      - deployments
-      - daemonsets
-      - replicasets
-      - statefulsets
-    verbs:
-      - create
-      - delete
-      - get
-      - list
-      - patch
-      - update
-      - watch
+      - "*"
   ##
-  ## Rules for io.focus.core/v1alpha1, Kind: Focus
+  ## Rules for core.focus.io/v1alpha1, Kind: Focus
   ##
   - apiGroups:
-      - io.focus.core
+      - core.focus.io
     resources:
       - foci
       - foci/status

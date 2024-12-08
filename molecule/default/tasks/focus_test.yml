@@ -1,5 +1,5 @@
 ---
-- name: Create the io.focus.core/v1alpha1.Focus
+- name: Create the core.focus.io/v1alpha1.Focus
   k8s:
     state: present
     namespace: '{{ namespace }}'
@@ -10,7 +10,7 @@
       type: Successful
       status: "True"
   vars:
-    cr_file: 'operator_v1alpha1_focus.yaml'
+    cr_file: 'core_v1alpha1_focus.yaml'
 
 - name: Add assertions here
   assert:
