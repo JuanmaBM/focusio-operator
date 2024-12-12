@@ -62,11 +62,10 @@
     api_version: v1
     kind: Secret
     name: argocd-secret
-    namespace: gitops
+    namespace: "{{ argocd_namespace | default('argocd') }}"
     definition:
-      spec:
-        data:
-          admin.password: "{{ argocd_admin_password }}"
+      data:
+        accounts.focus-admin.password: JDJhJDEwJDRCb1padHM2c3RIdmdtNjdtcVQuS2U3TnlVMmZtU0VkYU9raUhyckhHT0d0cmY3VkQydk9T
 
 - name: "Restart ArgoCD API server to apply changes"
   kubernetes.core.k8s:
