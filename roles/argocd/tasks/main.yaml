@@ -65,7 +65,7 @@
     namespace: "{{ argocd_namespace | default('argocd') }}"
     definition:
       data:
-        accounts.focus-admin.password: JDJhJDEwJDRCb1padHM2c3RIdmdtNjdtcVQuS2U3TnlVMmZtU0VkYU9raUhyckhHT0d0cmY3VkQydk9T
+        accounts.focus-admin.password: "JDJhJDEwJDRCb1padHM2c3RIdmdtNjdtcVQuS2U3TnlVMmZtU0VkYU9raUhyckhHT0d0cmY3VkQydk9T" # notsecret
 
 - name: "Restart ArgoCD API server to apply changes"
   kubernetes.core.k8s:
